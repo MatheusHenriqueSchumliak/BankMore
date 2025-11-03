@@ -1,0 +1,28 @@
+﻿using ContaCorrente.Infrastructure.Repositories;
+using Microsoft.Extensions.DependencyInjection;
+using ContaCorrente.Infrastructure.Context;
+using Microsoft.Extensions.Configuration;
+using ContaCorrente.Domain.Interfaces;
+
+namespace ContaCorrente.Infrastructure.Configuration;
+
+public static class DependencyInjection
+{
+	public static IServiceCollection AddInfraestructure(this IServiceCollection services, IConfiguration configuration)
+	{
+		//Pega a connection string
+		var connectionString = configuration.GetConnectionString("DefaultConnection")
+			?? throw new InvalidOperationException("Connection string 'DefaultConnection' não encontrada");
+
+		//Inicializa o banco de dados (cria pasta, arquivo .db e tabelas)
+		DbInitializer.Initialize(connectionString);
+
+		//Registra o DbContext
+		services.AddScoped<DbConnectionFactory>(_ => new DbConnectionFactory(connectionString));
+
+		//Registra repositórios
+		services.AddScoped<IContaCorrenteRepository, ContaCorrenteRepository>();
+
+		return services;
+	}
+}
