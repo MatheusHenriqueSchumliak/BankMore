@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="13.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ContaCorrente.Domain\ContaCorrente.Domain.csproj" />
+    <ProjectReference Include="..\ContaCorrente.Infrastructure\ContaCorrente.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
