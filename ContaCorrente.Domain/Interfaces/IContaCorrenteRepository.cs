@@ -6,7 +6,7 @@ public interface IContaCorrenteRepository
 	Task Atualizar(Entities.ContaCorrente contaCorrente);
 
 	// Retornos anuláveis para representar "não encontrado"
-	Task<Entities.ContaCorrente?> BuscarPorId(Guid id);
+	Task<Entities.ContaCorrente?> BuscarPorId(string id);
 	Task<Entities.ContaCorrente?> BuscarPorCpf(string cpf);
 	Task<Entities.ContaCorrente?> BuscarPorNumero(int numero);
 

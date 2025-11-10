@@ -1,7 +1,6 @@
 ﻿using ContaCorrente.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using ContaCorrente.Infrastructure.Context;
-using ContaCorrente.Infrastructure.Dapper;
 using Microsoft.Extensions.Configuration;
 using ContaCorrente.Domain.Interfaces;
 using ContaCorrente.Domain.Enums;
@@ -19,9 +18,6 @@ public static class DependencyInjection
 
 		//Inicializa o banco de dados (cria pasta, arquivo .db e tabelas)
 		DbInitializer.Initialize(connectionString);
-
-		//Registrando um TypeHandler para mapear o enum TipoMovimento no Dapper.
-		SqlMapper.AddTypeHandler(typeof(TipoMovimento), new TipoMovimentoTypeHandler());
 
 		//Registra o DbContext
 		services.AddScoped<DbConnectionFactory>(_ => new DbConnectionFactory(connectionString));

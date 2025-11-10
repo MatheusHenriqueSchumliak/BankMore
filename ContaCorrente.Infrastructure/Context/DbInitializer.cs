@@ -29,6 +29,7 @@ public static class DbInitializer
 				idcontacorrente TEXT(37) PRIMARY KEY,
 				numero INTEGER(10) NOT NULL UNIQUE,
 				nome TEXT(100) NOT NULL,
+				cpf TEXT(14) NOT NULL,
 				ativo INTEGER(1) NOT NULL DEFAULT 0,
 				senha TEXT(100) NOT NULL,
 				salt TEXT(100) NOT NULL,

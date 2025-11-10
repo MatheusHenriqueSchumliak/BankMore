@@ -58,7 +58,7 @@ public class ContaCorrenteRepository : IContaCorrenteRepository
 	public async Task<Domain.Entities.ContaCorrente?> BuscarPorCpf(string cpf)
 	{
 		const string query = @"
-			SELECT idcontacorrente AS Id,
+			SELECT idcontacorrente  AS Id,
 				   numero           AS Numero,
 				   nome             AS Nome,
 				   cpf              AS Cpf,
@@ -73,10 +73,10 @@ public class ContaCorrenteRepository : IContaCorrenteRepository
 		return await conexao.QuerySingleOrDefaultAsync<Domain.Entities.ContaCorrente>(query, new { Cpf = cpf });
 	}
 
-	public async Task<Domain.Entities.ContaCorrente?> BuscarPorId(Guid id)
+	public async Task<Domain.Entities.ContaCorrente?> BuscarPorId(string id)
 	{
 		const string query = @"
-			SELECT idcontacorrente AS Id,
+			SELECT idcontacorrente	AS Id,
 				   numero           AS Numero,
 				   nome             AS Nome,
 				   cpf              AS Cpf,
@@ -94,19 +94,31 @@ public class ContaCorrenteRepository : IContaCorrenteRepository
 	public async Task<Domain.Entities.ContaCorrente?> BuscarPorNumero(int numero)
 	{
 		const string sql = @"
-			SELECT idcontacorrente AS Id,
-				   numero           AS Numero,
-				   nome             AS Nome,
-				   cpf              AS Cpf,
-				   ativo            AS Ativo,
-				   senha            AS Senha,
-				   salt             AS Salt
+			SELECT idcontacorrente,
+				   numero,
+				   nome,
+				   cpf,
+				   ativo,
+				   senha,
+				   salt
 			FROM contacorrente
 			WHERE numero = @Numero;
 		";
 
 		using var conexao = _connectionString.CreateConnection();
-		return await conexao.QuerySingleOrDefaultAsync<Domain.Entities.ContaCorrente>(sql, new { Numero = numero });
+		var result = await conexao.QuerySingleOrDefaultAsync(sql, new { Numero = numero });
+
+		if (result == null) return null;
+
+		return new Domain.Entities.ContaCorrente(
+			Guid.Parse((string)result.idcontacorrente),
+			(int)result.numero,
+			(string)result.nome,
+			(string)result.cpf,
+			((long)result.ativo) == 1,
+			(string)result.senha,
+			(string)result.salt
+		);
 
 	}
 
@@ -114,8 +126,8 @@ public class ContaCorrenteRepository : IContaCorrenteRepository
 	{
 		const string query = @"
 			SELECT COUNT(1)
-			FROM ContaCorrente
-			WHERE Numero = @Numero;           ";
+			FROM contacorrente
+			WHERE numero = @Numero;           ";
 
 		using var conexao = _connectionString.CreateConnection();
 		var count = await conexao.ExecuteScalarAsync<int>(query, new { Numero = numero });

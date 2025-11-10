@@ -1,48 +1,47 @@
-﻿using ContaCorrente.Application.Commands;
+﻿using ContaCorrente.Infrastructure.Security;
+using ContaCorrente.Application.Commands;
 using ContaCorrente.Domain.Interfaces;
-using ContaCorrente.Domain.ValueObjects;
-using ContaCorrente.Infrastructure.Security;
-using MediatR;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
+using MediatR;
+
 
 namespace ContaCorrente.Application.Handlers;
 
+// Handler responsável por processar o comando de criação de conta corrente
 public class CriarContaCorrenteHandler : IRequestHandler<CriarContaCorrenteCommand, CriarContaCorrenteResult>
 {
-	#region Construtor
+	// Repositório de conta corrente para persistência
 	private readonly IContaCorrenteRepository _contaCorrenteRepository;
-	public CriarContaCorrenteHandler(IContaCorrenteRepository contaCorrenteRepository)
+	// Serviço para geração de tokens JWT
+	private readonly GeradorTokenJwt _geradorTokenJwt;
+
+	// Construtor recebe o repositório via injeção de dependência
+	public CriarContaCorrenteHandler(IContaCorrenteRepository contaCorrenteRepository, GeradorTokenJwt geradorTokenJwt)
 	{
 		_contaCorrenteRepository = contaCorrenteRepository;
+		_geradorTokenJwt = geradorTokenJwt;
 	}
-	#endregion
 
+	// Método principal que executa a lógica de criação da conta
 	public async Task<CriarContaCorrenteResult> Handle(CriarContaCorrenteCommand request, CancellationToken cancellationToken)
 	{
-		// Validação CPF método criado
-		if (ValidadorDeCpf.EhValido(request.Cpf))
-		{
-			/*throw new InvalidDocumentException("CPF inválido", "INVALID_DOCUMENT");*/
-			// Estudar como será melhor forma de lançar as exceções.
-		}
+		// Não valida o CPF aqui, pois a validação já é feita no controller para garantir resposta HTTP adequada
 
-		// Chamar Users service para criar user e obter userId
-		// Aqui: simular criando GUID. Em produção, chamar service Users (não enviar CPF para outros microsserviços).
+		// Simula criação de usuário (em produção, integraria com serviço de usuários)
 		var userId = Guid.NewGuid();
 
-		// Gerar numero da conta (exemplo simples)
+		// Gera um número de conta aleatório e garante unicidade
 		int numeroConta;
 		var tentativas = 0;
 		do
 		{
-			numeroConta = RandomNumberGenerator.GetInt32(1_000_000, 9_999_999); // entre 1_000_000 (inclusive) e 9_999_999 (exclusive)
+			numeroConta = RandomNumberGenerator.GetInt32(1_000_000, 9_999_999); // Gera número entre 1_000_000 e 9_999_999
 			tentativas++;
-			if (tentativas >= 20) break; // fallback após muitas tentativas
+			if (tentativas >= 20) break; // Fallback após muitas tentativas
 		}
 		while (await _contaCorrenteRepository.VerificaSeNumeroExiste(numeroConta));
 
-		// fallback determinístico se as tentativas aleatórias falharem
+		// Fallback determinístico se as tentativas aleatórias falharem
 		if (await _contaCorrenteRepository.VerificaSeNumeroExiste(numeroConta))
 		{
 			numeroConta = 1_000_000;
@@ -52,10 +51,10 @@ public class CriarContaCorrenteHandler : IRequestHandler<CriarContaCorrenteComma
 			}
 		}
 
-		// Gerar hash e salt da senha
+		// Gera hash e salt da senha para segurança
 		var (hash, salt) = HashDeSenha.CriarHash(request.Senha);
 
-		// Criar entidade corretamente (ordem de parâmetros conforme o construtor atual)
+		// Cria a entidade ContaCorrente com os dados recebidos e os gerados
 		var conta = new Domain.Entities.ContaCorrente(
 			Guid.NewGuid(),               // id da conta
 			numeroConta,                  // numero
@@ -66,8 +65,17 @@ public class CriarContaCorrenteHandler : IRequestHandler<CriarContaCorrenteComma
 			salt                          // salt
 		);
 
+		// Persiste a conta no banco de dados
 		await _contaCorrenteRepository.Criar(conta);
 
-		return new CriarContaCorrenteResult { NumeroConta = numeroConta.ToString() };
+		// Gera token JWT para a nova conta
+		var token = _geradorTokenJwt.GerarToken(conta.Id, conta.Numero, conta.Cpf);
+
+		// Retorna o número da conta criada
+		return new CriarContaCorrenteResult
+		{
+			NumeroConta = numeroConta.ToString(),
+			Token = token
+		};
 	}
 }
