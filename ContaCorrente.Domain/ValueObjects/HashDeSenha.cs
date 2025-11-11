@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace ContaCorrente.Infrastructure.Security;
+namespace ContaCorrente.Domain.ValueObjects;
 
 public static class HashDeSenha
 {

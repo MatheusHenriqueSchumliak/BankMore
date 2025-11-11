@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  # Serviço principal da API ContaCorrente
+  contacorrente-api:
+    build:
+      context: .  # Diretório raiz do projeto, onde está o Dockerfile
+      dockerfile: ContaCorrente.API/Dockerfile  # Caminho do Dockerfile da API
+    container_name: contacorrente-api  # Nome do container para facilitar identificação
+    ports:
+      - "8080:8080"  # Mapeia a porta 8080 do host para a porta 8080 do container (acesso à API)
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development  # Define o ambiente como Development (pode ser alterado para Production)
+      - ConnectionStrings__DefaultConnection=Data Source=/data/contacorrente.db  # String de conexão para o SQLite, usando o volume /data
+    volumes:
+      - contacorrente-data:/data  # Volume compartilhado para persistir o arquivo do banco SQLite fora do container
+    networks:
+      - contacorrente-net  # Rede interna para comunicação entre serviços (caso adicione outros no futuro)
+
+volumes:
+  contacorrente-data:
+    # Volume nomeado para persistir o arquivo do banco SQLite mesmo após remover o container
+
+networks:
+  contacorrente-net:
+    # Rede customizada para isolar e permitir comunicação entre os serviços do sistema

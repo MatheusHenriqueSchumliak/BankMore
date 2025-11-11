@@ -1,11 +1,5 @@
-using ContaCorrente.API.Configuration;
-using ContaCorrente.Application.Commands;
 using ContaCorrente.Infrastructure.Configuration;
-using ContaCorrente.Infrastructure.Security;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using ContaCorrente.API.Configuration;
 
 namespace ContaCorrente.API;
 
@@ -21,9 +15,9 @@ public class Program
 		builder.Services.AddInfraestructure(builder.Configuration);
 
 		// Adiciona o MediatR (registre os comandos/handlers do seu projeto)
-		builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CriarContaCorrenteCommand>());
+		builder.Services.AdicionaConfiguracaoMediatR();
 
-		//Configurações do JWT		
+		//Configurações do JWT
 		builder.Services.AdiconaAutenticacaoJwt(builder.Configuration);
 
 		//Configuração do Swagger

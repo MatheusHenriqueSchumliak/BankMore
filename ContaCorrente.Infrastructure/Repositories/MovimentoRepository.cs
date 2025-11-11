@@ -38,9 +38,9 @@ public class MovimentoRepository : IMovimentoRepository
 	{
 		const string query = @"
 			SELECT idmovimento		AS Id,
-				   idcontacorrente	AS ContaCorrenteId
-				   datamovimento    AS DataMovimento
-				   tipomovimento    AS TipoMovimento
+				   idcontacorrente	AS ContaCorrenteId,
+				   datamovimento    AS DataMovimento,
+				   tipomovimento    AS TipoMovimento,
 				   valor            AS Valor
 			FROM movimento
 			WHERE idcontacorrente = @ContaCorrenteId;

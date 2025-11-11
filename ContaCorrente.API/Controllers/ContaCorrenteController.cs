@@ -16,14 +16,14 @@ public class ContaCorrenteController : ControllerBase
 	// Repositórios e serviços necessários
 	private readonly IContaCorrenteRepository _contaCorrenteRepository;
 	private readonly IMovimentoRepository _movimentoRepository;
-	private readonly GeradorTokenJwt _geradorTokenJwt;
+	private readonly IGeradorTokenJwt _geradorTokenJwt;
 	private readonly IMediator _mediator;
 
 	// Construtor recebe dependências via injeção de dependência
 	public ContaCorrenteController(
 		IContaCorrenteRepository contaCorrenteRepository,
 		IMovimentoRepository movimentoRepository,
-		GeradorTokenJwt geradorTokenJwt,
+		IGeradorTokenJwt geradorTokenJwt,
 		IMediator mediator)
 	{
 		_contaCorrenteRepository = contaCorrenteRepository;
@@ -95,8 +95,6 @@ public class ContaCorrenteController : ControllerBase
 		return NoContent();
 	}
 
-
-
 	/// <summary>
 	/// Endpoint para consultar o saldo da conta corrente do usuário autenticado.
 	/// </summary>
@@ -146,6 +144,5 @@ public class ContaCorrenteController : ControllerBase
 
 		return Ok(resposta);
 	}
-
 
 }

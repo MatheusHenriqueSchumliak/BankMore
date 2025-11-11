@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ContaCorrente.Infrastructure.Context;
 using Microsoft.Extensions.Configuration;
 using ContaCorrente.Domain.Interfaces;
-using ContaCorrente.Domain.Enums;
-using Dapper;
 
 namespace ContaCorrente.Infrastructure.Configuration;
 

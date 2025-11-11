@@ -1,5 +1,6 @@
 ﻿using ContaCorrente.Infrastructure.Security;
 using ContaCorrente.Application.Commands;
+using ContaCorrente.Domain.ValueObjects;
 using ContaCorrente.Domain.Interfaces;
 using System.Security.Cryptography;
 using MediatR;
@@ -13,10 +14,10 @@ public class CriarContaCorrenteHandler : IRequestHandler<CriarContaCorrenteComma
 	// Repositório de conta corrente para persistência
 	private readonly IContaCorrenteRepository _contaCorrenteRepository;
 	// Serviço para geração de tokens JWT
-	private readonly GeradorTokenJwt _geradorTokenJwt;
+	private readonly IGeradorTokenJwt _geradorTokenJwt;
 
 	// Construtor recebe o repositório via injeção de dependência
-	public CriarContaCorrenteHandler(IContaCorrenteRepository contaCorrenteRepository, GeradorTokenJwt geradorTokenJwt)
+	public CriarContaCorrenteHandler(IContaCorrenteRepository contaCorrenteRepository, IGeradorTokenJwt geradorTokenJwt)
 	{
 		_contaCorrenteRepository = contaCorrenteRepository;
 		_geradorTokenJwt = geradorTokenJwt;

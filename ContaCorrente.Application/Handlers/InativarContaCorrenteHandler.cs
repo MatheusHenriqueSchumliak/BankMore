@@ -1,5 +1,5 @@
-﻿using ContaCorrente.Infrastructure.Security;
-using ContaCorrente.Application.Commands;
+﻿using ContaCorrente.Application.Commands;
+using ContaCorrente.Domain.ValueObjects;
 using ContaCorrente.Domain.Interfaces;
 using MediatR;
 

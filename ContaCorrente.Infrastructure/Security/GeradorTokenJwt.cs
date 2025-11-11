@@ -1,12 +1,12 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.Extensions.Configuration;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 
 namespace ContaCorrente.Infrastructure.Security;
 
-public class GeradorTokenJwt
+public class GeradorTokenJwt : IGeradorTokenJwt
 {
 	private readonly int _jwtExpirationMinutes;
 	private readonly string _jwtSecret;
