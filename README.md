@@ -147,6 +147,3 @@ docker-compose up --build
 - Pronto para rodar em containers Docker
 
 ---
-
-<hr>
-Desenvolvido por Matheus Henrique Schumliak - [GitHub](https://github.com/MatheusHenriqueSchumliak/BankMore)
